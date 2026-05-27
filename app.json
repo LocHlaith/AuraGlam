@@ -1,0 +1,28 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/scan/scan",
+    "pages/recommend/recommend",
+    "pages/routine/routine",
+    "pages/device/device"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "backgroundColor": "#050506",
+    "backgroundTextStyle": "light"
+  },
+  "usingComponents": {
+    "aura-tabbar": "/components/aura-tabbar/aura-tabbar"
+  },
+  "permission": {
+    "scope.camera": {
+      "desc": "用于识别人脸骨相与肤况并生成定妆方案"
+    },
+    "scope.record": {
+      "desc": "用于接收自然语音妆容描述"
+    }
+  },
+  "requiredPrivateInfos": [],
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

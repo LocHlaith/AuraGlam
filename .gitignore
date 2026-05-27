@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+output_mesh.png
+output_mesh.json
+project.private.config.json

@@ -1,0 +1,87 @@
+<view class="page-shell device-page safe-top">
+  <view class="page-head">
+    <view>
+      <text class="eyebrow">Device Hub</text>
+      <text class="page-title">AuraGlam 终端</text>
+    </view>
+    <button class="refresh-button" bindtap="refresh">
+      <image class="tiny-icon" src="/assets/icons/device.svg" mode="aspectFit" />
+    </button>
+  </view>
+
+  <view class="device-hero">
+    <view class="device-body">
+      <view class="device-screen"></view>
+      <view class="device-neck"></view>
+      <view class="device-base"></view>
+    </view>
+    <view class="device-stats">
+      <text class="device-status">{{deviceState}}</text>
+      <text class="device-copy">桌面级全自动美妆终端</text>
+      <view class="status-lines">
+        <block wx:for="{{safety}}" wx:key="label">
+          <view class="status-line">
+            <text>{{item.label}}</text>
+            <text>{{item.value}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">耗材仓</text>
+      <text class="section-note">RFID/NFC · 称重传感</text>
+    </view>
+    <view class="consumable-list">
+      <block wx:for="{{consumables}}" wx:key="name">
+        <view class="consumable-card">
+          <view class="consumable-top">
+            <view class="swatch" style="background: {{item.color}};"></view>
+            <view class="consumable-name">
+              <text>{{item.name}}</text>
+              <text>{{item.type}} · {{item.channel}}</text>
+            </view>
+            <text class="shots">{{item.shots}}次</text>
+          </view>
+          <view class="progress-track">
+            <view class="progress-fill" style="width: {{item.percent}}%;"></view>
+          </view>
+          <view class="percent-line">
+            <text>余量</text>
+            <text>{{item.percent}}%</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">硬件模块</text>
+      <text class="section-note">仿生硬件体系</text>
+    </view>
+    <view class="hardware-grid">
+      <block wx:for="{{hardware}}" wx:key="label">
+        <view class="hardware-card">
+          <image src="/assets/icons/shield.svg" mode="aspectFit" />
+          <text>{{item.label}}</text>
+          <text>{{item.value}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="maintenance-band">
+      <view>
+        <text class="maintenance-title">今日清洁</text>
+        <text class="maintenance-desc">喷枪管线 · 柔性笔尖 · 硅胶触头</text>
+      </view>
+      <button>完成</button>
+    </view>
+  </view>
+
+  <aura-tabbar active="device" />
+</view>

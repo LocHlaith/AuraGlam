@@ -1,0 +1,103 @@
+<view class="page-shell index-page">
+  <view class="hero safe-top">
+    <image class="hero-image" src="{{heroImage}}" mode="aspectFill" />
+    <view class="hero-layer"></view>
+    <view class="hero-content">
+      <view class="top-row">
+        <view>
+          <view class="brand">AuraGlam</view>
+          <view class="tagline">肤光掠影，温柔呵护</view>
+        </view>
+        <view class="status-pill">
+          <image class="tiny-icon" src="/assets/icons/shield.svg" mode="aspectFit" />
+          <text>力控就绪</text>
+        </view>
+      </view>
+      <view class="hero-copy">
+        <text class="hero-title">晨间柔雾通勤妆</text>
+        <text class="hero-subtitle">预计 06:40 完成 · 3D骨相方案已缓存</text>
+      </view>
+      <button class="hero-cta" data-url="/pages/recommend/recommend" bindtap="go">
+        <image class="tiny-icon" src="/assets/icons/sparkle.svg" mode="aspectFit" />
+        <text>生成今日妆容</text>
+      </button>
+    </view>
+  </view>
+
+  <view class="section quick-section">
+    <view class="quick-grid">
+      <block wx:for="{{quickActions}}" wx:key="title">
+        <button class="quick-card {{item.tone}}" data-url="{{item.url}}" bindtap="go">
+          <image class="quick-icon" src="{{item.icon}}" mode="aspectFit" />
+          <view class="quick-text">
+            <text class="quick-title">{{item.title}}</text>
+            <text class="quick-subtitle">{{item.subtitle}}</text>
+          </view>
+        </button>
+      </block>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">智能工作流</text>
+      <text class="section-note">千人千面 · 全自动闭环</text>
+    </view>
+    <view class="module-grid">
+      <block wx:for="{{modules}}" wx:key="name">
+        <view class="module-item">
+          <image class="module-icon" src="{{item.icon}}" mode="aspectFit" />
+          <text class="module-name">{{item.name}}</text>
+          <text class="module-value">{{item.value}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">妆容方案</text>
+      <button class="link-button" data-url="/pages/recommend/recommend" bindtap="go">AI生成</button>
+    </view>
+    <scroll-view class="routine-scroll" scroll-x enable-flex>
+      <block wx:for="{{routines}}" wx:key="title">
+        <view class="routine-card">
+          <image class="routine-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="routine-meta">
+            <text class="routine-title">{{item.title}}</text>
+            <text class="routine-desc">{{item.desc}}</text>
+            <view class="routine-bottom">
+              <text>{{item.time}}</text>
+              <button data-url="/pages/routine/routine" bindtap="go">执行</button>
+            </view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">耗材状态</text>
+      <button class="link-button" data-url="/pages/device/device" bindtap="go">详情</button>
+    </view>
+    <view class="consumable-list">
+      <block wx:for="{{consumables}}" wx:key="label">
+        <view class="consumable-row">
+          <view class="consumable-label">
+            <view class="swatch" style="background: {{item.color}};"></view>
+            <text>{{item.label}}</text>
+          </view>
+          <view class="consumable-meter">
+            <view class="progress-track">
+              <view class="progress-fill" style="width: {{item.percent}}%;"></view>
+            </view>
+            <text>{{item.percent}}%</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <aura-tabbar active="index" />
+</view>

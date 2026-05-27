@@ -1,0 +1,88 @@
+<view class="page-shell scan-page safe-top">
+  <view class="page-head">
+    <view>
+      <text class="eyebrow">3D Face Mesh</text>
+      <text class="page-title">AI骨相提取</text>
+    </view>
+    <view class="status-pill">
+      <image class="tiny-icon" src="/assets/icons/shield.svg" mode="aspectFit" />
+      <text>{{scanState === 'done' ? '已完成' : '待扫描'}}</text>
+    </view>
+  </view>
+
+  <view class="viewer">
+    <camera wx:if="{{cameraActive}}" class="camera-feed" device-position="front" flash="off" resolution="high" />
+    <image wx:else class="camera-feed" src="{{capturedImage}}" mode="aspectFill" />
+    <view class="scan-shade"></view>
+    <view class="scan-box">
+      <view class="corner lt"></view>
+      <view class="corner rt"></view>
+      <view class="corner lb"></view>
+      <view class="corner rb"></view>
+      <view wx:if="{{scanState === 'scanning'}}" class="scan-line"></view>
+      <block wx:for="{{landmarks}}" wx:key="index">
+        <view wx:if="{{scanState !== 'ready'}}" class="landmark" style="left: {{item.left}}%; top: {{item.top}}%;"></view>
+      </block>
+    </view>
+    <view class="viewer-caption">
+      <text>{{scanState === 'scanning' ? '正在提取3D面部骨相特征' : scanState === 'done' ? '骨相与肤况数据已同步' : 'AuraGlam 视觉模组待机'}}</text>
+    </view>
+  </view>
+
+  <view class="control-row">
+    <button class="primary-button" bindtap="startCamera">
+      <image class="tiny-icon" src="/assets/icons/camera.svg" mode="aspectFit" />
+      <text>摄像头</text>
+    </button>
+    <button class="soft-button" bindtap="takePhoto">
+      <image class="tiny-icon" src="/assets/icons/scan.svg" mode="aspectFit" />
+      <text>扫描</text>
+    </button>
+    <button class="soft-button" bindtap="useDemo">样张</button>
+  </view>
+
+  <view class="section progress-section">
+    <view class="section-head">
+      <text class="section-title">识别进度</text>
+      <text class="section-note">{{progress}}%</text>
+    </view>
+    <view class="progress-track">
+      <view class="progress-fill" style="width: {{progress}}%;"></view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">肤况数据</text>
+      <text class="section-note">深度相机 · 当日状态</text>
+    </view>
+    <view class="metric-grid">
+      <block wx:for="{{metrics}}" wx:key="label">
+        <view class="metric-card">
+          <text class="metric-label">{{item.label}}</text>
+          <view class="metric-value">
+            <text>{{item.value}}</text>
+            <text class="metric-unit">{{item.unit}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">轨迹建议</text>
+      <text class="section-note">AI骨相算法</text>
+    </view>
+    <view class="suggestion-list">
+      <block wx:for="{{recommendations}}" wx:key="*this">
+        <view class="suggestion-row">
+          <view class="dot"></view>
+          <text>{{item}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <aura-tabbar active="scan" />
+</view>

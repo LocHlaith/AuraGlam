@@ -1,0 +1,92 @@
+<view class="page-shell recommend-page safe-top">
+  <view class="page-head">
+    <view>
+      <text class="eyebrow">Aura AI</text>
+      <text class="page-title">智能妆容推荐</text>
+    </view>
+    <view class="status-pill">
+      <image class="tiny-icon" src="/assets/icons/sparkle.svg" mode="aspectFit" />
+      <text>{{resultReady ? '已生成' : '待生成'}}</text>
+    </view>
+  </view>
+
+  <view class="studio">
+    <view class="portrait-wrap">
+      <image class="portrait" src="{{beforeImage}}" mode="aspectFill" />
+      <view class="face-grid"></view>
+      <button class="capture-button" bindtap="chooseImage">
+        <image class="tiny-icon" src="/assets/icons/camera.svg" mode="aspectFit" />
+      </button>
+    </view>
+    <view class="voice-panel">
+      <view class="voice-row">
+        <button class="mic-button {{recording ? 'recording' : ''}}" bindtouchstart="startRecord" bindtouchend="stopRecord" bindtap="mockVoice">
+          <image class="mic-icon" src="/assets/icons/mic.svg" mode="aspectFit" />
+        </button>
+        <textarea class="prompt-input" maxlength="80" value="{{prompt}}" bindinput="onPromptInput" auto-height />
+      </view>
+      <view class="chip-row">
+        <block wx:for="{{styles}}" wx:key="key">
+          <button class="chip {{selectedStyle === item.key ? 'selected' : ''}}" data-key="{{item.key}}" bindtap="selectStyle">
+            <view class="chip-dot" style="background: {{item.color}};"></view>
+            <text>{{item.label}}</text>
+          </button>
+        </block>
+      </view>
+      <view class="scene-row">
+        <block wx:for="{{scenes}}" wx:key="key">
+          <button class="scene-chip {{selectedScene === item.key ? 'selected' : ''}}" data-key="{{item.key}}" bindtap="selectScene">{{item.label}}</button>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">定制方案</text>
+      <text class="section-note">骨相 · 肤况 · 场景</text>
+    </view>
+    <view class="plan-list">
+      <block wx:for="{{plan}}" wx:key="title">
+        <view class="plan-row">
+          <text class="plan-index">0{{index + 1}}</text>
+          <view class="plan-text">
+            <text class="plan-title">{{item.title}}</text>
+            <text class="plan-desc">{{item.desc}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section">
+    <button class="primary-button generate-button" bindtap="generateResult">
+      <image class="tiny-icon" src="/assets/icons/sparkle.svg" mode="aspectFit" />
+      <text>{{generating ? '生成中' : resultReady ? '重新生成' : '生成定妆效果'}}</text>
+    </button>
+    <view wx:if="{{generating}}" class="generate-progress">
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{progress}}%;"></view>
+      </view>
+      <text>{{progress}}%</text>
+    </view>
+  </view>
+
+  <view wx:if="{{resultReady}}" class="section result-section">
+    <view class="section-head">
+      <text class="section-title">定妆预览</text>
+      <button class="link-button" bindtap="goRoutine">执行</button>
+    </view>
+    <view class="result-view">
+      <video wx:if="{{!videoMissing}}" class="result-video" src="{{cheatVideoPath}}" poster="{{poster}}" controls autoplay muted show-center-play-btn binderror="onVideoError"></video>
+      <image wx:else class="result-video" src="{{poster}}" mode="aspectFill" />
+      <view class="result-badges">
+        <text>清透底妆</text>
+        <text>骨相修容</text>
+        <text>野生眉</text>
+      </view>
+    </view>
+  </view>
+
+  <aura-tabbar active="recommend" />
+</view>

@@ -1,0 +1,43 @@
+{
+  "description": "AuraGlam 微信小程序原型",
+  "packOptions": {
+    "ignore": [
+      {
+        "type": "folder",
+        "value": ".venv"
+      },
+      {
+        "type": "folder",
+        "value": "others"
+      },
+      {
+        "type": "folder",
+        "value": "tools"
+      },
+      {
+        "type": "folder",
+        "value": "docs"
+      }
+    ]
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.7.7",
+  "appid": "touristappid",
+  "projectname": "AuraGlam",
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
+}

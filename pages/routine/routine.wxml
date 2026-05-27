@@ -1,0 +1,89 @@
+<view class="page-shell routine-page safe-top">
+  <view class="page-head">
+    <view>
+      <text class="eyebrow">Auto Makeup</text>
+      <text class="page-title">全自动上妆</text>
+    </view>
+    <view class="status-pill">
+      <image class="tiny-icon" src="/assets/icons/shield.svg" mode="aspectFit" />
+      <text>{{running ? paused ? '已暂停' : '执行中' : progress === 100 ? '已完成' : '待机'}}</text>
+    </view>
+  </view>
+
+  <view class="arm-stage">
+    <view class="face-target"></view>
+    <view class="arm-base"></view>
+    <view class="arm-link one"></view>
+    <view class="joint j1"></view>
+    <view class="arm-link two"></view>
+    <view class="joint j2"></view>
+    <view class="tool-head"></view>
+    <view class="mist"></view>
+    <view class="stage-caption">
+      <text>{{steps[currentStep].name}}</text>
+      <text class="muted">{{steps[currentStep].tool}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">执行进度</text>
+      <text class="section-note">{{progress}}%</text>
+    </view>
+    <view class="progress-track">
+      <view class="progress-fill" style="width: {{progress}}%;"></view>
+    </view>
+    <view class="routine-actions">
+      <button class="primary-button" bindtap="start">{{paused ? '继续' : progress === 100 ? '再次执行' : '开始'}}</button>
+      <button class="soft-button" bindtap="pause">暂停</button>
+      <button class="soft-button" bindtap="reset">复位</button>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">步骤</text>
+      <text class="section-note">三工位工具塔</text>
+    </view>
+    <view class="step-list">
+      <block wx:for="{{steps}}" wx:key="name">
+        <view class="step-row {{item.state}}">
+          <view class="step-mark">{{index + 1}}</view>
+          <view class="step-copy">
+            <text class="step-name">{{item.name}}</text>
+            <text class="step-tool">{{item.tool}}</text>
+          </view>
+          <text class="step-duration">{{item.duration}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="telemetry-grid">
+      <block wx:for="{{telemetry}}" wx:key="label">
+        <view class="telemetry-card">
+          <text>{{item.label}}</text>
+          <text>{{item.value}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">安全日志</text>
+      <text class="section-note">RTOS实时控制</text>
+    </view>
+    <view class="log-list">
+      <block wx:for="{{logs}}" wx:key="*this">
+        <view class="log-row">
+          <view class="dot"></view>
+          <text>{{item}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <aura-tabbar active="routine" />
+</view>
