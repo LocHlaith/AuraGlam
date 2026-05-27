@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AuraGlam Web</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="side-nav" aria-label="主导航">
+        <div class="brand-block">
+          <span class="brand-mark">AG</span>
+          <div>
+            <strong>AuraGlam</strong>
+            <span>桌面级全自动美妆终端</span>
+          </div>
+        </div>
+        <nav class="nav-list">
+          <button class="nav-item active" type="button" data-view="index">
+            <img src="../assets/icons/home.svg" alt="" />
+            <span>首页</span>
+          </button>
+          <button class="nav-item" type="button" data-view="scan">
+            <img src="../assets/icons/scan.svg" alt="" />
+            <span>扫描</span>
+          </button>
+          <button class="nav-item" type="button" data-view="recommend">
+            <img src="../assets/icons/sparkle.svg" alt="" />
+            <span>定妆</span>
+          </button>
+          <button class="nav-item" type="button" data-view="routine">
+            <img src="../assets/icons/arm.svg" alt="" />
+            <span>执行</span>
+          </button>
+          <button class="nav-item" type="button" data-view="device">
+            <img src="../assets/icons/device.svg" alt="" />
+            <span>设备</span>
+          </button>
+        </nav>
+        <div class="rail-status">
+          <img src="../assets/icons/shield.svg" alt="" />
+          <span>力控就绪</span>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="view view-index active" id="view-index" data-view="index">
+          <div class="hero-panel">
+            <img class="hero-image" src="../assets/images/hero-aura.png" alt="AuraGlam 智能美妆终端工作台" />
+            <div class="hero-layer"></div>
+            <div class="hero-content">
+              <div class="hero-top">
+                <div>
+                  <div class="brand-title">AuraGlam</div>
+                  <div class="tagline">肤光掠影，温柔呵护</div>
+                </div>
+                <div class="status-pill">
+                  <img src="../assets/icons/shield.svg" alt="" />
+                  <span>力控就绪</span>
+                </div>
+              </div>
+              <div class="hero-copy">
+                <h1>晨间柔雾通勤妆</h1>
+                <p>预计 06:40 完成 · 3D骨相方案已缓存</p>
+                <button class="primary-action route-button" type="button" data-view="recommend">
+                  <img src="../assets/icons/sparkle.svg" alt="" />
+                  <span>生成今日妆容</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-grid" id="quickActions"></div>
+
+          <div class="index-grid">
+            <section class="section-block workflow-block">
+              <div class="section-head">
+                <div>
+                  <h2>智能工作流</h2>
+                  <p>千人千面 · 全自动闭环</p>
+                </div>
+              </div>
+              <div class="module-grid" id="moduleGrid"></div>
+            </section>
+
+            <section class="section-block consumable-block">
+              <div class="section-head">
+                <div>
+                  <h2>耗材状态</h2>
+                  <p>RFID/NFC · 双通道物料</p>
+                </div>
+                <button class="text-action route-button" type="button" data-view="device">详情</button>
+              </div>
+              <div class="compact-list" id="homeConsumables"></div>
+            </section>
+          </div>
+
+          <section class="section-block">
+            <div class="section-head">
+              <div>
+                <h2>妆容方案</h2>
+                <p>根据肤况和日程快速切换</p>
+              </div>
+              <button class="text-action route-button" type="button" data-view="recommend">AI生成</button>
+            </div>
+            <div class="routine-strip" id="routineCards"></div>
+          </section>
+        </section>
+
+        <section class="view view-scan" id="view-scan" data-view="scan">
+          <div class="page-head">
+            <div>
+              <span class="eyebrow aqua">3D Face Mesh</span>
+              <h1>AI骨相提取</h1>
+            </div>
+            <div class="status-pill">
+              <img src="../assets/icons/shield.svg" alt="" />
+              <span id="scanStateText">待扫描</span>
+            </div>
+          </div>
+
+          <div class="scan-viewer">
+            <video class="scan-feed" id="cameraFeed" autoplay muted playsinline hidden></video>
+            <img class="scan-feed" id="scanImage" src="../assets/images/demo-before.png" alt="妆前样张" />
+            <div class="scan-shade"></div>
+            <div class="scan-box">
+              <span class="corner lt"></span>
+              <span class="corner rt"></span>
+              <span class="corner lb"></span>
+              <span class="corner rb"></span>
+              <span class="scan-line" id="scanLine" hidden></span>
+              <div class="landmark-layer" id="landmarks"></div>
+            </div>
+            <div class="viewer-caption" id="scanCaption">AuraGlam 视觉模组待机</div>
+          </div>
+
+          <div class="control-row">
+            <button class="primary-button" type="button" id="startCamera">
+              <img src="../assets/icons/camera.svg" alt="" />
+              <span>摄像头</span>
+            </button>
+            <button class="soft-button" type="button" id="takePhoto">
+              <img src="../assets/icons/scan.svg" alt="" />
+              <span>扫描</span>
+            </button>
+            <button class="soft-button" type="button" id="useDemo">样张</button>
+          </div>
+
+          <section class="section-block">
+            <div class="section-head">
+              <div>
+                <h2>识别进度</h2>
+                <p>深度相机 · 当日状态</p>
+              </div>
+              <span class="metric-note" id="scanProgressText">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="scanProgress"></div>
+            </div>
+          </section>
+
+          <div class="two-column">
+            <section class="section-block">
+              <div class="section-head">
+                <div>
+                  <h2>肤况数据</h2>
+                  <p>骨相与肤况同步分析</p>
+                </div>
+              </div>
+              <div class="metric-grid" id="scanMetrics"></div>
+            </section>
+
+            <section class="section-block">
+              <div class="section-head">
+                <div>
+                  <h2>轨迹建议</h2>
+                  <p>AI骨相算法</p>
+                </div>
+              </div>
+              <div class="line-list" id="scanRecommendations"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view view-recommend" id="view-recommend" data-view="recommend">
+          <div class="page-head">
+            <div>
+              <span class="eyebrow rose">Aura AI</span>
+              <h1>智能妆容推荐</h1>
+            </div>
+            <div class="status-pill">
+              <img src="../assets/icons/sparkle.svg" alt="" />
+              <span id="resultStateText">待生成</span>
+            </div>
+          </div>
+
+          <div class="studio-grid">
+            <div class="portrait-wrap">
+              <img class="portrait" id="beforeImage" src="../assets/images/demo-before.png" alt="妆前照片" />
+              <div class="face-grid"></div>
+              <button class="icon-button" type="button" id="chooseImageButton" title="上传妆前照片" aria-label="上传妆前照片">
+                <img src="../assets/icons/camera.svg" alt="" />
+              </button>
+              <input id="photoUpload" type="file" accept="image/*" hidden />
+            </div>
+            <div class="voice-panel">
+              <div class="voice-row">
+                <button class="mic-button" type="button" id="mockVoice" title="模拟语音输入" aria-label="模拟语音输入">
+                  <img src="../assets/icons/mic.svg" alt="" />
+                </button>
+                <textarea id="promptInput" maxlength="80">今天有早会，希望妆面清透、有精神，遮一下黑眼圈，保留自然眉形。</textarea>
+              </div>
+              <div class="chip-row" id="styleChips"></div>
+              <div class="scene-row" id="sceneChips"></div>
+            </div>
+          </div>
+
+          <section class="section-block">
+            <div class="section-head">
+              <div>
+                <h2>定制方案</h2>
+                <p>骨相 · 肤况 · 场景</p>
+              </div>
+            </div>
+            <div class="plan-list" id="planList"></div>
+          </section>
+
+          <section class="section-block action-section">
+            <button class="primary-button full" type="button" id="generateResult">
+              <img src="../assets/icons/sparkle.svg" alt="" />
+              <span id="generateText">生成定妆效果</span>
+            </button>
+            <div class="generate-progress" id="generateProgress" hidden>
+              <div class="progress-track">
+                <div class="progress-fill" id="recommendProgress"></div>
+              </div>
+              <span id="recommendProgressText">0%</span>
+            </div>
+          </section>
+
+          <section class="section-block result-section" id="resultSection" hidden>
+            <div class="section-head">
+              <div>
+                <h2>定妆预览</h2>
+                <p>固定读取演示视频资源</p>
+              </div>
+              <button class="text-action route-button" type="button" data-view="routine">执行</button>
+            </div>
+            <div class="result-view">
+              <video class="result-media" id="resultVideo" poster="../assets/images/result-poster.png" muted playsinline controls hidden></video>
+              <img class="result-media" id="resultFallback" src="../assets/images/result-poster.png" alt="AI 定妆预览" />
+              <div class="result-badges">
+                <span>清透底妆</span>
+                <span>骨相修容</span>
+                <span>野生眉</span>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view view-routine" id="view-routine" data-view="routine">
+          <div class="page-head">
+            <div>
+              <span class="eyebrow blue">Auto Makeup</span>
+              <h1>全自动上妆</h1>
+            </div>
+            <div class="status-pill">
+              <img src="../assets/icons/shield.svg" alt="" />
+              <span id="routineStateText">待机</span>
+            </div>
+          </div>
+
+          <div class="arm-stage">
+            <div class="face-target"></div>
+            <div class="arm-base"></div>
+            <div class="arm-link one"></div>
+            <div class="joint j1"></div>
+            <div class="arm-link two"></div>
+            <div class="joint j2"></div>
+            <div class="tool-head"></div>
+            <div class="mist"></div>
+            <div class="stage-caption">
+              <strong id="currentStepName">肤前雾化</strong>
+              <span id="currentStepTool">气压喷枪</span>
+            </div>
+          </div>
+
+          <section class="section-block">
+            <div class="section-head">
+              <div>
+                <h2>执行进度</h2>
+                <p>RTOS实时控制</p>
+              </div>
+              <span class="metric-note" id="routineProgressText">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="routineProgress"></div>
+            </div>
+            <div class="routine-actions">
+              <button class="primary-button" type="button" id="startRoutine">开始</button>
+              <button class="soft-button" type="button" id="pauseRoutine">暂停</button>
+              <button class="soft-button" type="button" id="resetRoutine">复位</button>
+            </div>
+          </section>
+
+          <div class="two-column routine-columns">
+            <section class="section-block">
+              <div class="section-head">
+                <div>
+                  <h2>步骤</h2>
+                  <p>三工位工具塔</p>
+                </div>
+              </div>
+              <div class="step-list" id="stepList"></div>
+            </section>
+
+            <section class="section-block">
+              <div class="section-head">
+                <div>
+                  <h2>安全日志</h2>
+                  <p>主动退让 · 力控边界</p>
+                </div>
+              </div>
+              <div class="telemetry-grid" id="telemetryGrid"></div>
+              <div class="line-list log-list" id="logList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view view-device" id="view-device" data-view="device">
+          <div class="page-head">
+            <div>
+              <span class="eyebrow aqua">Device Hub</span>
+              <h1>AuraGlam 终端</h1>
+            </div>
+            <button class="icon-button quiet" type="button" id="refreshDevice" title="刷新设备状态" aria-label="刷新设备状态">
+              <img src="../assets/icons/device.svg" alt="" />
+            </button>
+          </div>
+
+          <div class="device-hero">
+            <img src="../assets/images/device-render.png" alt="AuraGlam 桌面级全自动美妆终端" />
+            <div class="device-stats">
+              <span class="device-status" id="deviceState">在线</span>
+              <h2>桌面级全自动美妆终端</h2>
+              <div class="status-lines" id="safetyList"></div>
+            </div>
+          </div>
+
+          <div class="two-column device-columns">
+            <section class="section-block">
+              <div class="section-head">
+                <div>
+                  <h2>耗材仓</h2>
+                  <p>RFID/NFC · 称重传感</p>
+                </div>
+              </div>
+              <div class="device-consumables" id="deviceConsumables"></div>
+            </section>
+
+            <section class="section-block">
+              <div class="section-head">
+                <div>
+                  <h2>硬件模块</h2>
+                  <p>仿生硬件体系</p>
+                </div>
+              </div>
+              <div class="hardware-grid" id="hardwareGrid"></div>
+              <div class="maintenance-band">
+                <div>
+                  <strong>今日清洁</strong>
+                  <span>喷枪管线 · 柔性笔尖 · 硅胶触头</span>
+                </div>
+                <button type="button" id="cleanDone">完成</button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <nav class="mobile-tabbar" aria-label="主导航">
+        <button class="tab active" type="button" data-view="index" aria-label="首页">
+          <img src="../assets/icons/home.svg" alt="" />
+          <span>首页</span>
+        </button>
+        <button class="tab" type="button" data-view="scan" aria-label="扫描">
+          <img src="../assets/icons/scan.svg" alt="" />
+          <span>扫描</span>
+        </button>
+        <button class="tab" type="button" data-view="recommend" aria-label="定妆">
+          <img src="../assets/icons/sparkle.svg" alt="" />
+          <span>定妆</span>
+        </button>
+        <button class="tab" type="button" data-view="routine" aria-label="执行">
+          <img src="../assets/icons/arm.svg" alt="" />
+          <span>执行</span>
+        </button>
+        <button class="tab" type="button" data-view="device" aria-label="设备">
+          <img src="../assets/icons/device.svg" alt="" />
+          <span>设备</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js" defer></script>
+  </body>
+</html>
