@@ -1,8 +1,31 @@
 const assets = {
-  icon: (name) => `../assets/icons/${name}.svg`,
   image: (name) => `../assets/images/${name}.png`,
+  meshJson: "../output_mesh.json",
   video: "../assets/videos/cheat_makeup_result.mp4"
 };
+
+const iconPaths = {
+  arm: '<path d="M20 47H44M26 47L18 33L27 24L38 35L31 47M38 35L47 26C50 23 50 18.5 47 15.5C44 12.5 39.5 12.5 36.5 15.5L27 24" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M47 26L53 32" stroke="white" stroke-width="5" stroke-linecap="round"/>',
+  camera: '<path d="M18 22H25L29 16H35L39 22H46C49.3 22 52 24.7 52 28V46C52 49.3 49.3 52 46 52H18C14.7 52 12 49.3 12 46V28C12 24.7 14.7 22 18 22Z" stroke="white" stroke-width="5" stroke-linejoin="round"/><circle cx="32" cy="37" r="9" stroke="white" stroke-width="5"/>',
+  cartridge: '<path d="M23 10H41V20L47 28V51C47 53.8 44.8 56 42 56H22C19.2 56 17 53.8 17 51V28L23 20V10Z" stroke="white" stroke-width="5" stroke-linejoin="round"/><path d="M22 36H42" stroke="white" stroke-width="4" stroke-linecap="round"/>',
+  device: '<rect x="14" y="12" width="36" height="44" rx="8" stroke="white" stroke-width="5"/><path d="M24 23H40M24 32H40M24 41H34" stroke="white" stroke-width="4" stroke-linecap="round"/>',
+  home: '<path d="M12 30.5L32 14L52 30.5V52C52 53.1 51.1 54 50 54H39V39H25V54H14C12.9 54 12 53.1 12 52V30.5Z" stroke="white" stroke-width="5" stroke-linejoin="round"/>',
+  mic: '<rect x="24" y="9" width="16" height="29" rx="8" stroke="white" stroke-width="5"/><path d="M15 32C15 41.4 22.6 49 32 49M49 32C49 41.4 41.4 49 32 49M32 49V57" stroke="white" stroke-width="5" stroke-linecap="round"/>',
+  scan: '<path d="M15 24V15H24M40 15H49V24M49 40V49H40M24 49H15V40" stroke="white" stroke-width="5" stroke-linecap="round"/><path d="M21 34C25 43 39 43 43 34M22 27C22.2 23.5 25 20 29 20H35C39 20 41.8 23.5 42 27" stroke="white" stroke-width="4" stroke-linecap="round"/>',
+  shield: '<path d="M32 8L51 16V29C51 42 43.2 52 32 56C20.8 52 13 42 13 29V16L32 8Z" stroke="white" stroke-width="5" stroke-linejoin="round"/><path d="M23 32L29 38L42 25" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
+  sparkle: '<path d="M30 8L36.5 25.5L54 32L36.5 38.5L30 56L23.5 38.5L6 32L23.5 25.5L30 8Z" stroke="white" stroke-width="4.5" stroke-linejoin="round"/><path d="M49 8L51.8 15.2L59 18L51.8 20.8L49 28L46.2 20.8L39 18L46.2 15.2L49 8Z" fill="white"/>'
+};
+
+function iconMarkup(name) {
+  const paths = iconPaths[name] || iconPaths.sparkle;
+  return `<span class="icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">${paths}</svg></span>`;
+}
+
+function hydrateStaticIcons() {
+  $$("[data-icon]").forEach((node) => {
+    node.innerHTML = `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">${iconPaths[node.dataset.icon] || iconPaths.sparkle}</svg>`;
+  });
+}
 
 const data = {
   quickActions: [
@@ -35,16 +58,7 @@ const data = {
     { label: "T区油光", value: "中", unit: "" },
     { label: "眼下暗沉", value: "轻", unit: "" }
   ],
-  landmarks: [
-    { left: 38, top: 35 },
-    { left: 48, top: 34 },
-    { left: 58, top: 36 },
-    { left: 44, top: 48 },
-    { left: 53, top: 48 },
-    { left: 41, top: 62 },
-    { left: 50, top: 64 },
-    { left: 59, top: 62 }
-  ],
+  landmarks: [],
   scanRecommendations: [
     "鼻翼两侧降低喷涂流量",
     "眼下遮瑕采用微震晕染",
@@ -104,6 +118,8 @@ const state = {
   scanState: "ready",
   scanProgress: 0,
   cameraStream: null,
+  meshImageSize: { width: 817, height: 1455 },
+  scanAutoRequested: false,
   scanTimer: null,
   selectedStyle: "commute",
   selectedScene: "morning",
@@ -162,6 +178,17 @@ function setView(view) {
   });
   document.title = `AuraGlam Web · ${viewTitle(target)}`;
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  if (target !== "scan" && state.cameraStream) {
+    stopCamera();
+    if (state.scanState === "camera") {
+      state.scanState = "ready";
+      state.scanAutoRequested = false;
+      updateScanUI();
+    }
+  }
+  if (target === "scan") {
+    maybeAutoStartCamera();
+  }
 }
 
 function viewTitle(view) {
@@ -186,14 +213,14 @@ function bindNavigation() {
 function renderIndex() {
   $("#quickActions").innerHTML = data.quickActions.map((item) => `
     <button class="quick-card ${item.tone}" type="button" data-view="${item.view}">
-      <img src="${assets.icon(item.icon)}" alt="" />
+      ${iconMarkup(item.icon)}
       <span><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.subtitle)}</span></span>
     </button>
   `).join("");
 
   $("#moduleGrid").innerHTML = data.modules.map((item) => `
     <div class="module-item">
-      <img src="${assets.icon(item.icon)}" alt="" />
+      ${iconMarkup(item.icon)}
       <strong>${escapeHtml(item.name)}</strong>
       <span>${escapeHtml(item.value)}</span>
     </div>
@@ -245,21 +272,106 @@ function renderScan() {
     </div>
   `).join("");
 
-  $("#landmarks").innerHTML = data.landmarks.map((item) => `
-    <span class="landmark" style="left:${item.left}%;top:${item.top}%"></span>
-  `).join("");
+  renderLandmarks(data.landmarks);
 
-  $("#startCamera").addEventListener("click", startCamera);
+  $("#startCamera").addEventListener("click", () => startCamera());
   $("#takePhoto").addEventListener("click", takePhoto);
   $("#useDemo").addEventListener("click", useDemoImage);
+  $("#scanImage").addEventListener("load", syncLandmarkLayer);
+  $("#cameraFeed").addEventListener("loadedmetadata", syncLandmarkLayer);
+  window.addEventListener("resize", syncLandmarkLayer);
   updateScanUI();
 }
 
-async function startCamera() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    toast("浏览器无法调用摄像头，已切换样张");
-    useDemoImage();
+async function loadMeshData() {
+  try {
+    const response = await fetch(assets.meshJson, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    const face = payload.faces && payload.faces[0];
+    if (!face || !face.length) throw new Error("empty mesh");
+
+    state.meshImageSize = { width: payload.width, height: payload.height };
+    data.landmarks = face.map((point) => ({
+      left: point.x / payload.width * 100,
+      top: point.y / payload.height * 100,
+      z: point.z,
+      index: point.index,
+      kind: point.index % 17 === 0 ? "major" : "soft"
+    }));
+    const meshMetric = data.scanMetrics.find((item) => item.label === "面部点云");
+    if (meshMetric) meshMetric.value = String(face.length);
+    renderLandmarks(data.landmarks);
+    renderScanMetrics();
+    syncLandmarkLayer();
+  } catch (error) {
+    data.landmarks = [];
+    toast("未读取到 output_mesh.json");
+    renderLandmarks([]);
+    syncLandmarkLayer();
+  }
+}
+
+function renderScanMetrics() {
+  $("#scanMetrics").innerHTML = data.scanMetrics.map((item) => `
+    <div class="metric-card">
+      <span class="metric-label">${escapeHtml(item.label)}</span>
+      <div class="metric-value">
+        <span>${escapeHtml(item.value)}</span>
+        <span class="metric-unit">${escapeHtml(item.unit)}</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderLandmarks(points) {
+  $("#landmarks").innerHTML = points.map((item) => `
+    <span class="landmark ${item.kind}" title="#${item.index ?? ""}" style="left:${item.left}%;top:${item.top}%"></span>
+  `).join("");
+}
+
+function syncLandmarkLayer() {
+  const layer = $("#landmarks");
+  const viewer = $(".scan-viewer");
+  const image = $("#scanImage");
+  if (!layer || !viewer) return;
+
+  const viewerWidth = viewer.clientWidth;
+  const viewerHeight = viewer.clientHeight;
+  if (!viewerWidth || !viewerHeight) return;
+
+  if (image && !image.hidden) {
+    const naturalWidth = state.meshImageSize.width || image.naturalWidth || 1;
+    const naturalHeight = state.meshImageSize.height || image.naturalHeight || 1;
+    const scale = Math.min(viewerWidth / naturalWidth, viewerHeight / naturalHeight);
+    const width = naturalWidth * scale;
+    const height = naturalHeight * scale;
+    layer.style.left = `${(viewerWidth - width) / 2}px`;
+    layer.style.top = `${(viewerHeight - height) / 2}px`;
+    layer.style.width = `${width}px`;
+    layer.style.height = `${height}px`;
     return;
+  }
+
+  layer.style.left = "0";
+  layer.style.top = "0";
+  layer.style.width = "100%";
+  layer.style.height = "100%";
+}
+
+function maybeAutoStartCamera() {
+  if (state.scanAutoRequested || state.scanState !== "ready" || state.cameraStream) return;
+  state.scanAutoRequested = true;
+  startCamera().then((opened) => {
+    if (opened) toast("摄像头已打开");
+  });
+}
+
+async function startCamera({ quiet = false, fallbackToDemo = false } = {}) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    if (!quiet) toast("浏览器无法调用摄像头，可使用样张演示");
+    if (fallbackToDemo) useDemoImage();
+    return false;
   }
 
   try {
@@ -273,9 +385,12 @@ async function startCamera() {
     state.scanState = "camera";
     state.scanProgress = 0;
     updateScanUI();
+    syncLandmarkLayer();
+    return true;
   } catch (error) {
-    toast("摄像头未授权，已使用样张");
-    useDemoImage();
+    if (!quiet) toast("摄像头未授权，可使用样张演示");
+    if (fallbackToDemo) useDemoImage();
+    return false;
   }
 }
 
@@ -290,13 +405,19 @@ function stopCamera() {
   video.hidden = true;
 }
 
-function takePhoto() {
+async function takePhoto() {
   if (!state.cameraStream) {
-    useDemoImage();
+    const opened = await startCamera();
+    if (opened) toast("摄像头已打开，对准面部后再点扫描");
     return;
   }
 
   const video = $("#cameraFeed");
+  if (!video.videoWidth) {
+    toast("摄像头画面加载中");
+    return;
+  }
+
   const canvas = document.createElement("canvas");
   canvas.width = video.videoWidth || 960;
   canvas.height = video.videoHeight || 1280;
@@ -304,6 +425,7 @@ function takePhoto() {
   $("#scanImage").src = canvas.toDataURL("image/jpeg", 0.88);
   $("#scanImage").hidden = false;
   stopCamera();
+  syncLandmarkLayer();
   startScan();
 }
 
@@ -311,6 +433,7 @@ function useDemoImage() {
   $("#scanImage").src = assets.image("demo-before");
   $("#scanImage").hidden = false;
   stopCamera();
+  syncLandmarkLayer();
   startScan();
 }
 
@@ -332,12 +455,14 @@ function startScan() {
 function updateScanUI() {
   const done = state.scanState === "done";
   const scanning = state.scanState === "scanning";
-  $("#scanStateText").textContent = done ? "已完成" : state.scanState === "ready" ? "待扫描" : "扫描中";
-  $("#scanCaption").textContent = scanning ? "正在提取3D面部骨相特征" : done ? "骨相与肤况数据已同步" : "AuraGlam 视觉模组待机";
+  const camera = state.scanState === "camera";
+  $("#scanStateText").textContent = done ? "已完成" : camera ? "摄像头" : state.scanState === "ready" ? "待扫描" : "扫描中";
+  $("#scanCaption").textContent = scanning ? "正在提取3D面部骨相特征" : done ? "骨相与肤况数据已同步" : camera ? "摄像头已开启，请对准面部后扫描" : "AuraGlam 视觉模组待机";
   $("#scanLine").hidden = !scanning;
-  $("#landmarks").hidden = state.scanState === "ready" || state.scanState === "camera";
+  $("#landmarks").hidden = false;
   $("#scanProgressText").textContent = `${state.scanProgress}%`;
   setProgress($("#scanProgress"), state.scanProgress);
+  syncLandmarkLayer();
 }
 
 function renderRecommend() {
@@ -595,7 +720,7 @@ function renderDevice() {
 
   $("#hardwareGrid").innerHTML = data.hardware.map((item) => `
     <article class="hardware-card">
-      <img src="${assets.icon("shield")}" alt="" />
+      ${iconMarkup("shield")}
       <strong>${escapeHtml(item.label)}</strong>
       <span>${escapeHtml(item.value)}</span>
     </article>
@@ -606,8 +731,10 @@ function renderDevice() {
 }
 
 function boot() {
+  hydrateStaticIcons();
   renderIndex();
   renderScan();
+  loadMeshData();
   renderRecommend();
   renderRoutine();
   renderDevice();

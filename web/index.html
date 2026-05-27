@@ -18,28 +18,28 @@
         </div>
         <nav class="nav-list">
           <button class="nav-item active" type="button" data-view="index">
-            <img src="../assets/icons/home.svg" alt="" />
+            <span class="icon" data-icon="home" aria-hidden="true"></span>
             <span>首页</span>
           </button>
           <button class="nav-item" type="button" data-view="scan">
-            <img src="../assets/icons/scan.svg" alt="" />
+            <span class="icon" data-icon="scan" aria-hidden="true"></span>
             <span>扫描</span>
           </button>
           <button class="nav-item" type="button" data-view="recommend">
-            <img src="../assets/icons/sparkle.svg" alt="" />
+            <span class="icon" data-icon="sparkle" aria-hidden="true"></span>
             <span>定妆</span>
           </button>
           <button class="nav-item" type="button" data-view="routine">
-            <img src="../assets/icons/arm.svg" alt="" />
+            <span class="icon" data-icon="arm" aria-hidden="true"></span>
             <span>执行</span>
           </button>
           <button class="nav-item" type="button" data-view="device">
-            <img src="../assets/icons/device.svg" alt="" />
+            <span class="icon" data-icon="device" aria-hidden="true"></span>
             <span>设备</span>
           </button>
         </nav>
         <div class="rail-status">
-          <img src="../assets/icons/shield.svg" alt="" />
+          <span class="icon" data-icon="shield" aria-hidden="true"></span>
           <span>力控就绪</span>
         </div>
       </aside>
@@ -56,7 +56,7 @@
                   <div class="tagline">肤光掠影，温柔呵护</div>
                 </div>
                 <div class="status-pill">
-                  <img src="../assets/icons/shield.svg" alt="" />
+                  <span class="icon" data-icon="shield" aria-hidden="true"></span>
                   <span>力控就绪</span>
                 </div>
               </div>
@@ -64,7 +64,7 @@
                 <h1>晨间柔雾通勤妆</h1>
                 <p>预计 06:40 完成 · 3D骨相方案已缓存</p>
                 <button class="primary-action route-button" type="button" data-view="recommend">
-                  <img src="../assets/icons/sparkle.svg" alt="" />
+                  <span class="icon" data-icon="sparkle" aria-hidden="true"></span>
                   <span>生成今日妆容</span>
                 </button>
               </div>
@@ -115,7 +115,7 @@
               <h1>AI骨相提取</h1>
             </div>
             <div class="status-pill">
-              <img src="../assets/icons/shield.svg" alt="" />
+              <span class="icon" data-icon="shield" aria-hidden="true"></span>
               <span id="scanStateText">待扫描</span>
             </div>
           </div>
@@ -130,18 +130,18 @@
               <span class="corner lb"></span>
               <span class="corner rb"></span>
               <span class="scan-line" id="scanLine" hidden></span>
-              <div class="landmark-layer" id="landmarks"></div>
             </div>
+            <div class="landmark-layer" id="landmarks"></div>
             <div class="viewer-caption" id="scanCaption">AuraGlam 视觉模组待机</div>
           </div>
 
           <div class="control-row">
             <button class="primary-button" type="button" id="startCamera">
-              <img src="../assets/icons/camera.svg" alt="" />
+              <span class="icon" data-icon="camera" aria-hidden="true"></span>
               <span>摄像头</span>
             </button>
             <button class="soft-button" type="button" id="takePhoto">
-              <img src="../assets/icons/scan.svg" alt="" />
+              <span class="icon" data-icon="scan" aria-hidden="true"></span>
               <span>扫描</span>
             </button>
             <button class="soft-button" type="button" id="useDemo">样张</button>
@@ -190,7 +190,7 @@
               <h1>智能妆容推荐</h1>
             </div>
             <div class="status-pill">
-              <img src="../assets/icons/sparkle.svg" alt="" />
+              <span class="icon" data-icon="sparkle" aria-hidden="true"></span>
               <span id="resultStateText">待生成</span>
             </div>
           </div>
@@ -200,14 +200,14 @@
               <img class="portrait" id="beforeImage" src="../assets/images/demo-before.png" alt="妆前照片" />
               <div class="face-grid"></div>
               <button class="icon-button" type="button" id="chooseImageButton" title="上传妆前照片" aria-label="上传妆前照片">
-                <img src="../assets/icons/camera.svg" alt="" />
+                <span class="icon" data-icon="camera" aria-hidden="true"></span>
               </button>
               <input id="photoUpload" type="file" accept="image/*" hidden />
             </div>
             <div class="voice-panel">
               <div class="voice-row">
                 <button class="mic-button" type="button" id="mockVoice" title="模拟语音输入" aria-label="模拟语音输入">
-                  <img src="../assets/icons/mic.svg" alt="" />
+                  <span class="icon" data-icon="mic" aria-hidden="true"></span>
                 </button>
                 <textarea id="promptInput" maxlength="80">今天有早会，希望妆面清透、有精神，遮一下黑眼圈，保留自然眉形。</textarea>
               </div>
@@ -228,7 +228,7 @@
 
           <section class="section-block action-section">
             <button class="primary-button full" type="button" id="generateResult">
-              <img src="../assets/icons/sparkle.svg" alt="" />
+              <span class="icon" data-icon="sparkle" aria-hidden="true"></span>
               <span id="generateText">生成定妆效果</span>
             </button>
             <div class="generate-progress" id="generateProgress" hidden>
@@ -266,7 +266,7 @@
               <h1>全自动上妆</h1>
             </div>
             <div class="status-pill">
-              <img src="../assets/icons/shield.svg" alt="" />
+              <span class="icon" data-icon="shield" aria-hidden="true"></span>
               <span id="routineStateText">待机</span>
             </div>
           </div>
@@ -335,7 +335,7 @@
               <h1>AuraGlam 终端</h1>
             </div>
             <button class="icon-button quiet" type="button" id="refreshDevice" title="刷新设备状态" aria-label="刷新设备状态">
-              <img src="../assets/icons/device.svg" alt="" />
+              <span class="icon" data-icon="device" aria-hidden="true"></span>
             </button>
           </div>
 
@@ -381,23 +381,23 @@
 
       <nav class="mobile-tabbar" aria-label="主导航">
         <button class="tab active" type="button" data-view="index" aria-label="首页">
-          <img src="../assets/icons/home.svg" alt="" />
+          <span class="icon" data-icon="home" aria-hidden="true"></span>
           <span>首页</span>
         </button>
         <button class="tab" type="button" data-view="scan" aria-label="扫描">
-          <img src="../assets/icons/scan.svg" alt="" />
+          <span class="icon" data-icon="scan" aria-hidden="true"></span>
           <span>扫描</span>
         </button>
         <button class="tab" type="button" data-view="recommend" aria-label="定妆">
-          <img src="../assets/icons/sparkle.svg" alt="" />
+          <span class="icon" data-icon="sparkle" aria-hidden="true"></span>
           <span>定妆</span>
         </button>
         <button class="tab" type="button" data-view="routine" aria-label="执行">
-          <img src="../assets/icons/arm.svg" alt="" />
+          <span class="icon" data-icon="arm" aria-hidden="true"></span>
           <span>执行</span>
         </button>
         <button class="tab" type="button" data-view="device" aria-label="设备">
-          <img src="../assets/icons/device.svg" alt="" />
+          <span class="icon" data-icon="device" aria-hidden="true"></span>
           <span>设备</span>
         </button>
       </nav>
